@@ -1,15 +1,51 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Vite App</title>
-  </head>
-  <body>
-    <div id="app">
-      <h1>hello world</h1>
+
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Vite App</title>
+</head>
+
+<body>
+  <header>
+    <ul class="topbar">
+      <li>TODAY'S TOP HITS</li>
+      <li>Feb 18<sup>Mon</sup></li>
+      <li>Explore top hits currently ruling the charts!</li>
+      <!-- <li>The hottest tracks dominating the charts right now!</li> -->
+    </ul>
+    <div class="titles">
+      <div class="titles-wrapper">
+        <h1>Today's Top Hits</h1>
+        <span>Today's Top Hits</span>
+      </div>
     </div>
-    <script type="module" src="/main.js"></script>
-  </body>
+    <p class="description"><sup>Enter the Vibe</sup> Step into the world of Today's Top Hits and let the rhythm guide
+      you through a sonic journey filled with energy, emotion, and pure musical bliss.</p>
+    <!-- Today's Top Hits - Where  🎶✨the Music Never Stops and the Good Times Keep Rollin'. Let's turn up the volume and make some memories together! -->
+  </header>
+
+  <!-- <footer>
+    <p>&copy; 2024 Today's Top Hits. All rights reserved.</p>
+  </footer> -->
+
+  <main id="app">
+
+    <section>
+      <h2 class="visually-hidden">Featured Songs</h2>
+      <ul class="top-tracks" id="topTracks"></ul>
+    </section>
+
+    <section>
+      <h2>Artists</h2>
+      <ul id="topArtists"></ul>
+    </section>
+
+  </main>
+
+  <script type="module" src="/main.js"></script>
+</body>
+
 </html>
