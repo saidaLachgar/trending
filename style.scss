@@ -96,7 +96,7 @@ header {
       display: inline-block;
       animation: marquee 18s linear infinite;
 
-      >* {
+      > * {
         display: inline-block;
         line-height: 0.6;
         font-size: 600px;
@@ -186,8 +186,7 @@ main {
   z-index: 10;
   padding: 10px 20px 0;
   overflow-y: auto;
-
-
+  overflow-x: hidden;
 
   li {
     display: flex;
@@ -227,22 +226,23 @@ main {
   .title {
     flex: 1;
   }
-  
+
   .artist {
     font-size: 20px;
   }
-  
+
   .number {
     font-size: 50px;
   }
-  
+
   .name {
-    display: block;
-    max-height: 2.5em;
+    font-size: 30px;
+    display: -webkit-box;
+    -webkit-line-clamp: 1;
+    -webkit-box-orient: vertical;
     overflow: hidden;
     text-overflow: ellipsis;
-    white-space: nowrap;
-    font-size: 30px;
+    margin-bottom: 5px;
   }
 
   .button {
