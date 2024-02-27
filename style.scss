@@ -226,22 +226,22 @@ main {
 
   .title {
     flex: 1;
+  }
+  
+  .artist {
+    font-size: 20px;
+  }
+  
+  .number {
+    font-size: 50px;
+  }
+  
+  .name {
     display: block;
     max-height: 2.5em;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
-  }
-
-  .artist {
-    font-size: 20px;
-  }
-
-  .number {
-    font-size: 50px;
-  }
-
-  .name {
     font-size: 30px;
   }
 
