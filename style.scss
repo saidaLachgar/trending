@@ -187,29 +187,7 @@ main {
   padding: 10px 20px 0;
   overflow-y: auto;
 
-  @media (min-width: 1441px) {
-    flex: 1;
-    max-width: 40vw;
-    max-height: calc(100vh - 10px);
-    max-height: calc(100svh - 10px);
 
-    scrollbar-width: thin;
-    scrollbar-color: #000000 #ffffff;
-
-    &::-webkit-scrollbar {
-      width: 16px;
-    }
-
-    &::-webkit-scrollbar-track {
-      background: #ffffff;
-    }
-
-    &::-webkit-scrollbar-thumb {
-      background-color: #000000;
-      border-radius: 10px;
-      border: 3px solid #ffffff;
-    }
-  }
 
   li {
     display: flex;
@@ -273,6 +251,7 @@ main {
     font-size: 30px;
     pointer-events: all;
     cursor: pointer;
+    color: #000;
 
     svg {
       margin-left: 5px;
@@ -322,6 +301,36 @@ main {
 
     a {
       color: #000;
+    }
+  }
+
+  @media (max-width: 1440px) {
+    img {
+      display: none;
+    }
+  }
+
+  @media (min-width: 1441px) {
+    flex: 1;
+    max-width: 40vw;
+    max-height: calc(100vh - 10px);
+    max-height: calc(100svh - 10px);
+
+    scrollbar-width: thin;
+    scrollbar-color: #000000 #ffffff;
+
+    &::-webkit-scrollbar {
+      width: 16px;
+    }
+
+    &::-webkit-scrollbar-track {
+      background: #ffffff;
+    }
+
+    &::-webkit-scrollbar-thumb {
+      background-color: #000000;
+      border-radius: 10px;
+      border: 3px solid #ffffff;
     }
   }
 }
