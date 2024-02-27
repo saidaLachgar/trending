@@ -69,45 +69,107 @@ const getData = async () => {
     "fields",
     "items(added_at,track(album(name,href,release_date,images),artists,duration_ms,name, preview_url))"
   );
-  url.searchParams.append("limit", "8");
+  url.searchParams.append("limit", "20");
   url.searchParams.append("offset", "0");
 
   return fetchApi(url, token);
 };
 
 const renderTopTracks = async (data) => {
-  const topTracks = data.items.slice(0, 8);
+  const topTracks = data.items;
   const topTracksList = document.getElementById("topTracks");
+  const img = document.getElementById("preview");
+  const credits = document.createElement("div");
+  credits.innerHTML = '<p class="credits">Made by <a href="https://saidalachgar.site/" rel="noopener" target="_blank">Saida Lachgar</a></p>'
   topTracksList.innerHTML = "";
 
   topTracks.forEach((track, index) => {
-    const li = document.createElement("li");
+    const el = document.createElement("li");
+
+    // content
     let name = `<h3 class="name">${track.track.name}</h3>`;
-    let artist =   `<p class="artist">${track.track.artists[0].name}</p>`;
-    let number = `<p class="number">${String(index+1).padStart(2, '0')}</p>`;
-    let play = `<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><path fill="currentColor" d="M8 17.175V6.825q0-.425.3-.713t.7-.287q.125 0 .263.037t.262.113l8.15 5.175q.225.15.338.375t.112.475q0 .25-.113.475t-.337.375l-8.15 5.175q-.125.075-.263.113T9 18.175q-.4 0-.7-.288t-.3-.712Z"/></svg>`;
-    let button = `<button class="button">Play${play}</button>`;
-    li.innerHTML = `${number}<div class="title">${name}${artist}</div>${button}`;
-    topTracksList.appendChild(li);
+    let artist = `<p class="artist">${track.track.artists[0].name}</p>`;
+    let number = `<p class="number">${String(index + 1).padStart(2, "0")}</p>`;
+    // play
+    let playIcon = `<span class="play-icon">Play<svg width="25" height="25" viewBox="0 0 24 24"><path d="m7.05 3.606 13.49 7.788a.7.7 0 0 1 0 1.212L7.05 20.394A.7.7 0 0 1 6 19.788V4.212a.7.7 0 0 1 1.05-.606z"></path></svg></span>`;
+    let playingIcon = `<span class="playing-icon">Playing<svg width="20" height="20" viewBox="0 0 14 14" ><path d="M3.99902 14H5.99902V0H3.99902V14ZM-0.000976562 14H1.99902V4H-0.000976562V14ZM12 7V14H14V7H12ZM8.00002 14H10V10H8.00002V14Z" fill="#000"/></svg></span></span>`;
+    let pauseIcon = `<span class="pause-icon">Pause<svg width="25" height="25" viewBox="0 0 24 24"><path d="M5.7 3a.7.7 0 0 0-.7.7v16.6a.7.7 0 0 0 .7.7h2.6a.7.7 0 0 0 .7-.7V3.7a.7.7 0 0 0-.7-.7H5.7zm10 0a.7.7 0 0 0-.7.7v16.6a.7.7 0 0 0 .7.7h2.6a.7.7 0 0 0 .7-.7V3.7a.7.7 0 0 0-.7-.7h-2.6z"></path></svg></span></span>`;
+    let button = `<button type="button" class="button">${playIcon}${playingIcon}${pauseIcon}</button>`;
+    // media
+    let previewUrl = track.track.preview_url;
+    let audio = `<audio loop id="audio" src="${previewUrl}"></audio>`;
+    let image = track.track.album.images[1].url;
+    // result
+    el.innerHTML = `${number}<div class="title">${name}${artist}</div>${
+      previewUrl ? button : ""
+    }${audio}`;
+    button = el.querySelector("button");
+    audio = el.querySelector("audio");
+
+    // events
+    el.addEventListener("mouseover", function (e) {
+      img.setAttribute("src", image);
+    });
+    el.addEventListener("mousemove", (e) => {
+      img.style.top = e.clientY + "px";
+      img.style.left = e.clientX + "px";
+    });
+    el.addEventListener("mouseleave", (e) => {
+      img.setAttribute("src", "");
+    });
+    previewUrl &&
+      el.addEventListener("click", () => {
+        if (audio.duration > 0 && audio.paused) {
+          let currentActive = document.querySelector("button.playing");
+          currentActive && currentActive.click();
+          audio.play();
+          button.classList.add("playing");
+        } else {
+          audio.pause();
+          button.classList.remove("playing");
+        }
+      });
+
+    // "audioprocess,canplay,canplaythrough,complete,durationchange,emptied,ended,loadeddata,loadedmetadata,pause,play,playing,ratechange,seeked,seeking,stalled,suspend,timeupdate,volumechange,waiting".split(",").forEach(name => {
+    //   audio.addEventListener(name, (e) => console.log(e.timeStamp.toFixed(2) + ": " + e.type));
+    // });
+
+    topTracksList.appendChild(el);
+    topTracksList.appendChild(credits);
   });
 };
 
-const renderTopArtists = async (data) => {
-  const artists = data.items.map((item) => item.track.artists[0].name);
-  const uniqueArtists = [...new Set(artists)];
-  const topArtists = uniqueArtists.slice(0, 4);
+// const renderTopArtists = async (data) => {
+//   const artists = data.items.map((item) => item.track.artists[0].name);
+//   const uniqueArtists = [...new Set(artists)];
+//   const topArtists = uniqueArtists.slice(0, 4);
 
-  const topArtistsList = document.getElementById("topArtists");
-  topArtistsList.innerHTML = "";
-  topArtists.forEach((artist) => {
-    const li = document.createElement("li");
-    li.textContent = artist;
-    topArtistsList.appendChild(li);
-  });
+//   const topArtistsList = document.getElementById("topArtists");
+//   topArtistsList.innerHTML = "";
+//   topArtists.forEach((artist) => {
+//     const li = document.createElement("li");
+//     li.textContent = artist;
+//     topArtistsList.appendChild(li);
+//   });
+// };
+
+const setCurrentDate = () => {
+  // Get today's date
+  var currentDate = new Date();
+
+  // Extract month, day, and day of the week
+  var month = currentDate.toLocaleString("default", { month: "short" });
+  var day = currentDate.getDate();
+  var dayOfWeek = currentDate.toLocaleString("default", { weekday: "short" });
+
+  // Format the date
+  var formattedDate = month + " " + day + "<sup>" + dayOfWeek + "</sup>";
+
+  document.getElementById("currentDate").innerHTML = formattedDate;
 };
-
 window.onload = async () => {
+  setCurrentDate();
   const data = await getData();
   renderTopTracks(data);
-  renderTopArtists(data);
+  // renderTopArtists(data);
 };
