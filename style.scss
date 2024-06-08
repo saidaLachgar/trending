@@ -44,7 +44,9 @@ header {
     height: 100%;
     justify-content: space-between;
     position: relative;
-    animation: slideLeft 0.8s cubic-bezier(0.13, 0.51, 0.23, 1) 0s 1;
+    animation: slideLeft 0.8s cubic-bezier(0.13, 0.51, 0.23, 1) 1s 1 forwards;
+    opacity: 0;
+    padding-left: 50vw;
   }
 
   .topbar {
@@ -173,7 +175,8 @@ header {
 
   @media (min-width: 1441px) {
     height: calc(100vh - 10px);
-    animation: slideRight 0.6s cubic-bezier(0.13, 0.51, 0.23, 1) 0s 1;
+    width: 0;
+    animation: slideRight 0.6s cubic-bezier(0.13, 0.51, 0.23, 1) 1s 1 forwards;
 
     .content {
       width: 60vw;
@@ -189,9 +192,6 @@ main {
   overflow-x: hidden;
 
   li {
-    display: flex;
-    column-gap: 40px;
-    align-items: center;
     text-transform: capitalize;
     margin-bottom: 20px;
     border-bottom: 1px solid #000;
@@ -199,8 +199,11 @@ main {
     column-gap: 15px;
     cursor: pointer;
     transition: all 0.3s ease;
-    animation: slideUp 0.6s cubic-bezier(0.13, 0.51, 0.23, 1) 0s 1;
-
+    opacity: 0;
+    padding-top: 100vh;
+    animation: slideUp 0.6s cubic-bezier(0.13, 0.51, 0.23, 1) 1s 1 forwards;
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto;
     *:hover {
       mix-blend-mode: overlay;
     }
@@ -223,10 +226,6 @@ main {
     border-radius: 8px;
   }
 
-  .title {
-    flex: 1;
-  }
-
   .artist {
     font-size: 20px;
   }
@@ -234,15 +233,35 @@ main {
   .number {
     font-size: 50px;
   }
-
   .name {
+    display: flex;
+    align-items: center;
     font-size: 30px;
-    display: -webkit-box;
-    -webkit-line-clamp: 1;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-    text-overflow: ellipsis;
     margin-bottom: 5px;
+    span {
+      display: block;
+      max-height: 2em;
+      max-width: 100%;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      overflow: hidden;
+      max-width: calc(100% - 100px);
+    }
+  }
+
+  .link {
+    margin-left: 12px;
+    svg {
+      transition: transform 0.3s ease;
+      color: #000;
+    }
+    path {
+      transition: all 0.3s ease;
+    }
+    &:hover svg {
+      color: #fff;
+      transform: scale(1.6);
+    }
   }
 
   .button {

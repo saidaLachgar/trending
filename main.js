@@ -67,7 +67,7 @@ const getData = async () => {
   var url = new URL(`${apiUrl}/${endpoint}`);
   url.searchParams.append(
     "fields",
-    "items(added_at,track(album(name,href,release_date,images),artists,duration_ms,name, preview_url))"
+    "items(added_at,track(album(name,href,release_date,images,external_urls),artists,duration_ms,name, preview_url))"
   );
   url.searchParams.append("limit", "20");
   url.searchParams.append("offset", "0");
@@ -80,14 +80,18 @@ const renderTopTracks = async (data) => {
   const topTracksList = document.getElementById("topTracks");
   const img = document.getElementById("preview");
   const credits = document.createElement("div");
-  credits.innerHTML = '<p class="credits">Made by <a href="https://saidalachgar.site/" rel="noopener" target="_blank">Saida Lachgar</a></p>'
+  credits.innerHTML =
+    '<p class="credits">Made by <a href="https://saidalachgar.site/" rel="noopener" target="_blank">Saida Lachgar</a></p>';
   topTracksList.innerHTML = "";
 
   topTracks.forEach((track, index) => {
     const el = document.createElement("li");
 
+    // link
+    let linkIcon = `<svg xmlns="http://www.w3.org/2000/svg" width="23" height="23" fill="none" viewBox="0 0 23 23"><path fill="currentColor" d="M3.167 21 20.303 3.898v15.764H22V1H3.337v1.696h15.767L2 19.832 3.167 21Z"/><path fill="currentColor" fill-rule="evenodd" d="m3.165 22.414-2.58-2.583L16.693 3.697H2.336V0h20.663v20.662h-3.697V6.308L3.165 22.414ZM20.303 3.898v15.764H22V1H3.337v1.696h15.767L2 19.832 3.167 21 20.303 3.898Z" clip-rule="evenodd"/></svg>`;
+    let link = `<a title="Open on spotify" href="${track.track.album.external_urls.spotify}" class="link" target="_blank">${linkIcon}</a>`;
     // content
-    let name = `<h3 class="name">${track.track.name}</h3>`;
+    let name = `<h3 class="name"><span>${track.track.name}</span>${link}</h3>`;
     let artist = `<p class="artist">${track.track.artists[0].name}</p>`;
     let number = `<p class="number">${String(index + 1).padStart(2, "0")}</p>`;
     // play
@@ -173,3 +177,7 @@ window.onload = async () => {
   renderTopTracks(data);
   // renderTopArtists(data);
 };
+
+setTimeout(() => {
+  document.getElementById("loader").remove();
+}, 1000);
