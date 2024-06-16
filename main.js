@@ -141,6 +141,12 @@ const renderTopTracks = async (data) => {
     topTracksList.appendChild(el);
     topTracksList.appendChild(credits);
   });
+
+  document.getElementById("loader").remove();
+  setTimeout(() => {
+    document.getElementById("header").style.display = "block";
+    document.getElementById("app").style.display = "block";
+  }, 100);
 };
 
 // const renderTopArtists = async (data) => {
@@ -177,7 +183,3 @@ window.onload = async () => {
   renderTopTracks(data);
   // renderTopArtists(data);
 };
-
-setTimeout(() => {
-  document.getElementById("loader").remove();
-}, 1000);

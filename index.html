@@ -18,6 +18,11 @@
       display: flex;
       align-items: center;
       justify-content: center;
+      flex-direction: column;
+      font-size: 12px;
+      row-gap: 5px;
+      font-weight: bold;
+      font-family: sans-serif;
     }
 
     #wave {
@@ -149,9 +154,10 @@
       <path id="Line_9" data-name="Line 9"
         d="M48.91,15l-0.12,0A1,1,0,0,0,48,16v6a1,1,0,1,0,2,0s0,0,0,0V16a1,1,0,0,0-1-1H48.91Z" />
     </svg>
+    LOADING
   </div>
 
-  <header>
+  <header id="header" style="display: none;">
     <div class="content">
       <ul class="topbar">
         <li>TODAY'S TOP HITS</li>
@@ -167,7 +173,8 @@
           <span>Today's Top Hits</span>
         </div>
       </div>
-      <p class="description"><sup>Enter the Vibe</sup> Step into the world of Today's Top Hits and let the rhythm guide
+      <p class="description"><sup>Enter the Vibe</sup> Step into the world of Today's Top Hits and let the rhythm
+        guide
         you through a journey filled with energy, emotion, and pure musical bliss.</p>
 
       <div class="copyrights">
@@ -183,16 +190,17 @@
   </header>
 
   <!-- <footer>
-    <p>&copy; 2024 Today's Top Hits. All rights reserved.</p>
-  </footer> -->
+      <p>&copy; 2024 Today's Top Hits. All rights reserved.</p>
+    </footer> -->
 
-  <main class="top-tracks" id="app">
+  <main class="top-tracks" id="app" style="display: none;">
     <section>
       <h2 class="visually-hidden">Featured Songs</h2>
       <ul id="topTracks"></ul>
       <img src="" alt="" id="preview">
     </section>
   </main>
+
 
   <script type="module" src="/main.js"></script>
 </body>
