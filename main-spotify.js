@@ -1,24 +1,82 @@
 import "./style.scss";
 
-const itunesApiUrl = "https://itunes.apple.com/us/rss/topsongs/limit=20/json";
+const clientId = "a06c52829e614cd5999154a472759adf";
+const clientSecret = "2295a3251eab45f2b83006e7baf10ea0";
+const authUrl = "https://accounts.spotify.com/api/token";
+const apiUrl = "https://api.spotify.com";
+let accessToken = "";
 
-const getData = async () => {
-  try {
-    const response = await fetch(itunesApiUrl);
-    if (!response.ok) {
-      throw new Error(
-        `Request failed: ${response.status} ${response.statusText}`
-      );
-    }
-    const data = await response.json();
-    return data.feed.entry;
-  } catch (error) {
-    console.error("Error fetching data:", error);
-    return [];
+const getToken = async () => {
+  if (accessToken) {
+    return accessToken;
+  }
+  const authResponse = await fetch(authUrl, {
+    method: "POST",
+    headers: {
+      Authorization: `Basic ${getEncodedCredentials(clientId, clientSecret)}`,
+      "Content-Type": "application/x-www-form-urlencoded",
+    },
+    body: "grant_type=client_credentials",
+  });
+
+  if (!authResponse.ok) {
+    throw new Error(
+      `Failed to get access token: ${authResponse.status} ${authResponse.statusText}`
+    );
+  }
+
+  const authData = await authResponse.json();
+  accessToken = authData.access_token;
+  return accessToken;
+};
+
+const getEncodedCredentials = (clientId, clientSecret) => {
+  if (typeof window !== "undefined" && typeof btoa === "function") {
+    return btoa(`${clientId}:${clientSecret}`);
+  } else {
+    return Buffer.from(`${clientId}:${clientSecret}`).toString("base64");
   }
 };
 
-const renderTopTracks = async (topTracks) => {
+const fetchApi = async (url, token, method = "GET", body = null) => {
+  const options = {
+    method,
+    headers: {
+      Authorization: `Bearer ${token}`,
+      "Content-Type": "application/json",
+    },
+    body: body ? JSON.stringify(body) : null,
+  };
+
+  const response = await fetch(url, options);
+  if (!response.ok) {
+    throw new Error(
+      `Request failed: ${response.status} ${response.statusText}`
+    );
+  }
+
+  return await response.json();
+};
+
+const getData = async () => {
+  // https://developer.spotify.com/documentation/web-api/reference/get-playlist
+  const token = await getToken();
+  // const playlistId = "37i9dQZEVXbMDoHDwVN2tF"; // top global 50
+  const playlistId = "37i9dQZEVXbMDoHDwVN2tF"; // todays top hit
+  const endpoint = `v1/playlists/${playlistId}/tracks`;
+  var url = new URL(`${apiUrl}/${endpoint}`);
+  url.searchParams.append(
+    "fields",
+    "items(added_at,track(album(name,href,release_date,images,external_urls),artists,duration_ms,name, preview_url))"
+  );
+  url.searchParams.append("limit", "20");
+  url.searchParams.append("offset", "0");
+
+  return fetchApi(url, token);
+};
+
+const renderTopTracks = async (data) => {
+  const topTracks = data.items;
   const topTracksList = document.getElementById("topTracks");
   const img = document.getElementById("preview");
   const credits = document.createElement("div");
@@ -31,26 +89,20 @@ const renderTopTracks = async (topTracks) => {
 
     // link
     let linkIcon = `<svg xmlns="http://www.w3.org/2000/svg" width="23" height="23" fill="none" viewBox="0 0 23 23"><path fill="currentColor" d="M3.167 21 20.303 3.898v15.764H22V1H3.337v1.696h15.767L2 19.832 3.167 21Z"/><path fill="currentColor" fill-rule="evenodd" d="m3.165 22.414-2.58-2.583L16.693 3.697H2.336V0h20.663v20.662h-3.697V6.308L3.165 22.414ZM20.303 3.898v15.764H22V1H3.337v1.696h15.767L2 19.832 3.167 21 20.303 3.898Z" clip-rule="evenodd"/></svg>`;
-    let link = `<a title="Open on iTunes" href="${track.id.label}" class="link" target="_blank">${linkIcon}</a>`;
+    let link = `<a title="Open on spotify" href="${track.track.album.external_urls.spotify}" class="link" target="_blank">${linkIcon}</a>`;
     // content
-    let name = `<h3 class="name"><span>${track["im:name"]["label"]}</span>${link}</h3>`;
-    let artist = `<p class="artist">${track["im:artist"]["label"]}</p>`;
+    let name = `<h3 class="name"><span>${track.track.name}</span>${link}</h3>`;
+    let artist = `<p class="artist">${track.track.artists[0].name}</p>`;
     let number = `<p class="number">${String(index + 1).padStart(2, "0")}</p>`;
     // play
     let playIcon = `<span class="play-icon">Play<svg width="25" height="25" viewBox="0 0 24 24"><path d="m7.05 3.606 13.49 7.788a.7.7 0 0 1 0 1.212L7.05 20.394A.7.7 0 0 1 6 19.788V4.212a.7.7 0 0 1 1.05-.606z"></path></svg></span>`;
     let playingIcon = `<span class="playing-icon">Playing<svg width="20" height="20" viewBox="0 0 14 14" ><path d="M3.99902 14H5.99902V0H3.99902V14ZM-0.000976562 14H1.99902V4H-0.000976562V14ZM12 7V14H14V7H12ZM8.00002 14H10V10H8.00002V14Z" fill="#000"/></svg></span></span>`;
     let pauseIcon = `<span class="pause-icon">Pause<svg width="25" height="25" viewBox="0 0 24 24"><path d="M5.7 3a.7.7 0 0 0-.7.7v16.6a.7.7 0 0 0 .7.7h2.6a.7.7 0 0 0 .7-.7V3.7a.7.7 0 0 0-.7-.7H5.7zm10 0a.7.7 0 0 0-.7.7v16.6a.7.7 0 0 0 .7.7h2.6a.7.7 0 0 0 .7-.7V3.7a.7.7 0 0 0-.7-.7h-2.6z"></path></svg></span></span>`;
     let button = `<button type="button" class="button">${playIcon}${playingIcon}${pauseIcon}</button>`;
-    // img
-    let image = track["im:image"].pop().label;
     // media
-    let previewUrl = track.link.find(({ attributes }) =>
-      attributes.type.includes("audio")
-    );
-    let audio = "";
-    if (previewUrl) {
-      audio = `<audio loop id="audio" src="${previewUrl.attributes.href}"></audio>`;
-    }
+    let previewUrl = track.track.preview_url;
+    let audio = `<audio loop id="audio" src="${previewUrl}"></audio>`;
+    let image = track.track.album.images[1].url;
     // result
     el.innerHTML = `${number}<div class="title">${name}${artist}</div>${
       previewUrl ? button : ""
@@ -82,6 +134,10 @@ const renderTopTracks = async (topTracks) => {
         }
       });
 
+    // "audioprocess,canplay,canplaythrough,complete,durationchange,emptied,ended,loadeddata,loadedmetadata,pause,play,playing,ratechange,seeked,seeking,stalled,suspend,timeupdate,volumechange,waiting".split(",").forEach(name => {
+    //   audio.addEventListener(name, (e) => console.log(e.timeStamp.toFixed(2) + ": " + e.type));
+    // });
+
     topTracksList.appendChild(el);
     topTracksList.appendChild(credits);
   });
@@ -107,9 +163,9 @@ const setCurrentDate = () => {
 
   document.getElementById("currentDate").innerHTML = formattedDate;
 };
-
 window.onload = async () => {
   setCurrentDate();
   const data = await getData();
   renderTopTracks(data);
+  // renderTopArtists(data);
 };
